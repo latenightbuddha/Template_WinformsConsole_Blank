@@ -5,7 +5,9 @@ namespace Extern
 {
     public class DllImports
     {
-        public class WindowsConsole
+        private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
+
+        public class WindowsHooks
         {
             /// <summary>
             /// Retrieves the window handle used by the console associated with the calling process.
@@ -23,6 +25,48 @@ namespace Extern
             [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
             public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
+            /// <summary>
+            /// Installs an application-defined hook procedure into a hook chain.
+            /// </summary>
+            /// <param name="idHook">The type of hook procedure to be installed.</param>
+            /// <param name="lpfn">A pointer to the hook procedure.</param>
+            /// <param name="hMod">A handle to the DLL containing the hook procedure pointed to by the lpfn parameter.</param>
+            /// <param name="dwThreadId">The identifier of the thread with which the hook procedure is to be associated.</param>
+            /// <returns></returns>
+            [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+            private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
+
+            /// <summary>
+            /// Removes a hook procedure installed in a hook chain.
+            /// </summary>
+            /// <param name="hhk">A handle to the hook to be removed.</param>
+            /// <returns>If the function succeeds, the return value is nonzero.</returns>
+            [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            private static extern bool UnhookWindowsHookEx(IntPtr hhk);
+
+            /// <summary>
+            /// Passes the hook information to the next hook procedure in the current hook chain.
+            /// </summary>
+            /// <param name="hhk">This parameter is ignored.</param>
+            /// <param name="nCode">The hook code passed to the current hook procedure.</param>
+            /// <param name="wParam">The wParam value passed to the current hook procedure.</param>
+            /// <param name="lParam">The lParam value passed to the current hook procedure.</param>
+            /// <returns>This value is returned by the next hook procedure in the chain.</returns>
+            [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+            private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
+
+            /// <summary>
+            /// Retrieves a module handle for the specified module.
+            /// </summary>
+            /// <param name="lpModuleName">The name of the loaded module (either a .dll or .exe file). If the file name extension is omitted</param>
+            /// <returns>If the function succeeds, the return value is a handle to the specified module otherwise NULL will be returned</returns>
+            [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+            private static extern IntPtr GetModuleHandle(string lpModuleName);
+        }
+
+        public class WindowsConsole
+        {
             /// <summary>
             /// Perform certain special effects when showing or hiding a window
             /// </summary>

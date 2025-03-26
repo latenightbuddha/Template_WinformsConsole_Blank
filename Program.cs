@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using static Extern.DllImports.WindowsHooks;
 using static Extern.DllImports.WindowsConsole;
 
 namespace WinformsConsole
@@ -15,7 +16,8 @@ namespace WinformsConsole
         /// Read-Only Bool State (Managed) of IsConsoleDisplayed
         /// </summary>
         public static bool IsConsoleDisplayed => _localIsConsoleDisplayed;
-        
+
+        // Local assignment for IsConsoleDisplayed
         private static bool _localIsConsoleDisplayed;
 
         /// <summary>
@@ -24,17 +26,32 @@ namespace WinformsConsole
         [STAThread]
         static void Main()
         {
+            // Set initial console window to be hidden.
             ShowConsoleWindow(false);
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            // Create Form
             mainForm = new Form1();
+
+            // Set window to be active once the Form is loaded
             mainForm.Load += new EventHandler(delegate (Object sender, EventArgs e) { mainForm.Activate(); });
+
+            // Runs Form1 in the main thread.
             Application.Run(mainForm);
 
+            // ------------------------------------------------
+            // All code below will be ran after the main thread with Form1 has ended.
+            // ------------------------------------------------
+
+            // Display console during closing.
             ShowConsoleWindow(true);
+
+            // Print default message once the main form is closed.
             Console.Write(Environment.NewLine + "Press any key to close this window . . .");
+
+            // Hold the window open so the user can read the screen before exiting.
             Console.ReadKey();
         }
 
