@@ -5,7 +5,7 @@ namespace Extern
 {
     public class DllImports
     {
-        private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
+        public delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
 
         public class WindowsHooks
         {
@@ -34,7 +34,7 @@ namespace Extern
             /// <param name="dwThreadId">The identifier of the thread with which the hook procedure is to be associated.</param>
             /// <returns></returns>
             [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-            private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
+            public static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
 
             /// <summary>
             /// Removes a hook procedure installed in a hook chain.
@@ -43,7 +43,7 @@ namespace Extern
             /// <returns>If the function succeeds, the return value is nonzero.</returns>
             [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            private static extern bool UnhookWindowsHookEx(IntPtr hhk);
+            public static extern bool UnhookWindowsHookEx(IntPtr hhk);
 
             /// <summary>
             /// Passes the hook information to the next hook procedure in the current hook chain.
@@ -54,7 +54,7 @@ namespace Extern
             /// <param name="lParam">The lParam value passed to the current hook procedure.</param>
             /// <returns>This value is returned by the next hook procedure in the chain.</returns>
             [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-            private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
+            public static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
 
             /// <summary>
             /// Retrieves a module handle for the specified module.
@@ -62,7 +62,7 @@ namespace Extern
             /// <param name="lpModuleName">The name of the loaded module (either a .dll or .exe file). If the file name extension is omitted</param>
             /// <returns>If the function succeeds, the return value is a handle to the specified module otherwise NULL will be returned</returns>
             [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-            private static extern IntPtr GetModuleHandle(string lpModuleName);
+            public static extern IntPtr GetModuleHandle(string lpModuleName);
         }
 
         public class WindowsConsole

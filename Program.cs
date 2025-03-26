@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
+using System.Collections.Generic;
+using KeyboardUtils;
 using static Extern.DllImports.WindowsHooks;
 using static Extern.DllImports.WindowsConsole;
 
@@ -38,6 +40,20 @@ namespace WinformsConsole
             // Set window to be active once the Form is loaded
             mainForm.Load += new EventHandler(delegate (Object sender, EventArgs e) { mainForm.Activate(); });
 
+            string message;
+            var hookId = GlobalKeyboardHook.Instance.Hook(
+                new List<System.Windows.Input.Key> {
+            System.Windows.Input.Key.LeftCtrl,
+            System.Windows.Input.Key.B
+                },
+                () =>
+                {
+                    Console.WriteLine("ctrl+a");
+                },
+                out message);
+            Console.WriteLine(message);
+      
+
             // Runs Form1 in the main thread.
             Application.Run(mainForm);
 
@@ -47,6 +63,8 @@ namespace WinformsConsole
 
             // Display console during closing.
             ShowConsoleWindow(true);
+
+            GlobalKeyboardHook.Instance.UnHook(hookId);
 
             // Print default message once the main form is closed.
             Console.Write(Environment.NewLine + "Press any key to close this window . . .");
